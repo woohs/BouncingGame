@@ -4,6 +4,10 @@ var ctx = canvas.getContext('2d');
 var width = canvas.width = window.innerWidth;
 var height = canvas.height = window.innerHeight;
 
+window.onload = function () {
+
+  loop();
+}
 // function to generate random number
 
 function random(min,max) {
@@ -11,13 +15,94 @@ function random(min,max) {
   return num;
 }
 
-// define Ball constructor
-
-function Ball(x, y, velX, velY, color, size) {
+function Shape(x, y, velX, velY, exists) {
   this.x = x;
   this.y = y;
   this.velX = velX;
   this.velY = velY;
+  this.exists = exists;
+}
+
+//定义邪恶圈
+function EvilCircle(x, y, exists) {
+  Shape.call(this, x, y, exists);
+  this.color = 'white';
+  this.size = 10;
+  this.velX = 20;
+  this.velY = 20;
+}
+
+EvilCircle.prototype.draw = function(){
+  ctx.beginPath();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = this.color;
+  ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+  ctx.stroke();
+}
+
+EvilCircle.prototype.checkBounds = function() {
+  if((this.x + this.size) >= width) {
+    this.x -= this.size;
+  }
+
+  if((this.x - this.size) <= 0) {
+    this.x += this.size;
+  }
+
+  if((this.y + this.size) >= height) {
+    this.y -= this.size;
+  }
+
+  if((this.y - this.size) <= 0) {
+    this.y += this.size;
+  }
+};
+
+EvilCircle.prototype.setControls = function() {
+  var _this = this;
+  window.onkeydown = function(e){
+    switch (e.key) {
+      case 'a':
+        _this.x -= _this.velX;
+        break;
+      case 'd':
+        _this.x += _this.velX;
+        break;
+      case 'w':
+        _this.y -= _this.velY;
+        break;
+      case 's':
+        _this.y += _this.velY;
+        break;
+    
+      default:
+        break;
+    }
+  }
+}
+
+EvilCircle.prototype.collisionDetect = function() {
+  for(var j = 0; j < balls.length; j++) {
+    if(balls[j].exists === true) {
+      var dx = this.x - balls[j].x;
+      var dy = this.y - balls[j].y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < this.size + balls[j].size) {
+        balls[j].exists = false;
+      }
+    }
+  }
+};
+
+// define Ball constructor
+
+function Ball(x, y, velX, velY, exists, color, size) {
+  Shape.call(this, x, y, velX, velY, exists); //继承调用
+  // this.x = x;
+  // this.y = y;
+  // this.velX = velX;
+  // this.velY = velY;
   this.color = color;
   this.size = size;
 }
@@ -89,21 +174,35 @@ function loop() {
       random(0 + size,height - size),
       random(-7,7),
       random(-7,7),
+      true,
       'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
       size
     );
     balls.push(ball);
   }
 
+  var _ballCount = 0;
   for(var i = 0; i < balls.length; i++) {
-    balls[i].draw();
-    balls[i].update();
-    balls[i].collisionDetect();
+    if(balls[i].exists){
+      balls[i].draw();
+      balls[i].update();
+      balls[i].collisionDetect();
+      _ballCount ++;
+    }
+
   }
 
+  evilCircle.draw();
+  evilCircle.checkBounds();
+  evilCircle.collisionDetect();
+  showBallsCount(_ballCount);//显示分数
   requestAnimationFrame(loop);
 }
 
+function showBallsCount(val){
+  document.getElementById('ballCount').innerHTML = 'Ball Count:' + val;
+}
 
+var evilCircle = new EvilCircle(random(0,width),random(0,height),true);
+evilCircle.setControls();
 
-loop();
