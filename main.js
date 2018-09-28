@@ -60,25 +60,38 @@ EvilCircle.prototype.checkBounds = function() {
 
 EvilCircle.prototype.setControls = function() {
   var _this = this;
-  window.onkeydown = function(e){
-    switch (e.key) {
-      case 'a':
-        _this.x -= _this.velX;
-        break;
-      case 'd':
-        _this.x += _this.velX;
-        break;
-      case 'w':
-        _this.y -= _this.velY;
-        break;
-      case 's':
-        _this.y += _this.velY;
-        break;
-    
-      default:
-        break;
-    }
+  var _keyPressed = {};
+
+  window.onkeyup = function (e) {
+    _keyPressed[e.keyCode] = false;
   }
+  window.onkeydown = function(e){
+    _keyPressed[e.keyCode] = true;
+  }
+  setInterval(function(){
+    for(var key in _keyPressed){
+      if(_keyPressed[key]){
+
+        switch (parseInt(key)) {
+          case 65:
+            _this.x -= _this.velX;
+            break;
+          case 68:
+            _this.x += _this.velX;
+            break;
+          case 87:
+            _this.y -= _this.velY;
+            break;
+          case 83:
+            _this.y += _this.velY;
+            break;
+        
+          default:
+            break;
+        }
+      }
+    }
+  },50)
 }
 
 EvilCircle.prototype.collisionDetect = function() {
@@ -165,15 +178,15 @@ function loop() {
   ctx.fillStyle = 'rgba(0,0,0,0.25)';
   ctx.fillRect(0,0,width,height);
 
-  while(balls.length < 25) {
+  while(balls.length < 15) {
     var size = random(10,20);
     var ball = new Ball(
       // ball position always drawn at least one ball width
       // away from the adge of the canvas, to avoid drawing errors
       random(0 + size,width - size),
       random(0 + size,height - size),
-      random(-7,7),
-      random(-7,7),
+      random(-5,5),
+      random(-5,5),
       true,
       'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')',
       size
@@ -205,4 +218,3 @@ function showBallsCount(val){
 
 var evilCircle = new EvilCircle(random(0,width),random(0,height),true);
 evilCircle.setControls();
-
