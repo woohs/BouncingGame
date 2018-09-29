@@ -3,9 +3,10 @@ var ctx = canvas.getContext('2d');
 
 var width = canvas.width = window.innerWidth;
 var height = canvas.height = window.innerHeight;
-
+var BALL_COUNT = random(15,20);
+var ANIMATION = null;
 window.onload = function () {
-
+  setTimeout();
   loop();
 }
 // function to generate random number
@@ -23,18 +24,19 @@ function Shape(x, y, velX, velY, exists) {
   this.exists = exists;
 }
 
-//定义邪恶圈
+//定义控制器
 function EvilCircle(x, y, exists) {
   Shape.call(this, x, y, exists);
   this.color = 'white';
   this.size = 10;
-  this.velX = 20;
-  this.velY = 20;
+  this.velX = 10;
+  this.velY = 10;
+  this.hp = 10; // 生命值
 }
 
 EvilCircle.prototype.draw = function(){
   ctx.beginPath();
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 5;
   ctx.strokeStyle = this.color;
   ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
   ctx.stroke();
@@ -94,17 +96,19 @@ EvilCircle.prototype.setControls = function() {
   },50)
 }
 
+//碰撞判断
 EvilCircle.prototype.collisionDetect = function() {
   for(var j = 0; j < balls.length; j++) {
-    if(balls[j].exists === true) {
-      var dx = this.x - balls[j].x;
-      var dy = this.y - balls[j].y;
-      var distance = Math.sqrt(dx * dx + dy * dy);
+    
+    var dx = this.x - balls[j].x;
+    var dy = this.y - balls[j].y;
+    var distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance < this.size + balls[j].size) {
-        balls[j].exists = false;
-      }
+    if (distance < this.size + balls[j].size) {
+      this.hp --; //扣分
+      this.color = 'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')';
     }
+    
   }
 };
 
@@ -177,8 +181,8 @@ var balls = [];
 function loop() {
   ctx.fillStyle = 'rgba(0,0,0,0.25)';
   ctx.fillRect(0,0,width,height);
-
-  while(balls.length < 15) {
+  
+  while(balls.length < BALL_COUNT) {
     var size = random(10,20);
     var ball = new Ball(
       // ball position always drawn at least one ball width
@@ -209,11 +213,34 @@ function loop() {
   evilCircle.checkBounds();
   evilCircle.collisionDetect();
   showBallsCount(_ballCount);//显示分数
-  requestAnimationFrame(loop);
+  showMainHP(evilCircle.hp);
+  ANIMATION = requestAnimationFrame(loop);
 }
 
 function showBallsCount(val){
   document.getElementById('ballCount').innerHTML = 'Ball Count:' + val;
+}
+function showMainHP(val){
+  document.getElementById('mainHP').innerHTML = 'HP:' + val;
+  if(val <= 0){
+    document.getElementById('result').innerHTML = 'GAME OVER'
+    window.cancelAnimationFrame(ANIMATION);
+    
+    
+  }
+}
+
+function setTimeout(){
+  var _timeout = 30;
+  var timer = setInterval(()=>{
+    _timeout --;
+    document.getElementById('timeout').innerHTML = _timeout;
+    if(_timeout <= 0){
+      window.cancelAnimationFrame(ANIMATION);
+      clearInterval(timer);
+    }
+  },1000)
+
 }
 
 var evilCircle = new EvilCircle(random(0,width),random(0,height),true);
