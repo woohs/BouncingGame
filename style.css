@@ -10,6 +10,7 @@ html {
 body {
   overflow: hidden;
   height: inherit;
+  border: 1px solid white;
 }
 
 h1 {
@@ -36,6 +37,17 @@ h2 {
   text-shadow: 0 0 4px #d32a2a;
 }
 
+h1#chapter {
+  font-size: 2.5rem;
+  letter-spacing: -1px;
+  position: absolute;
+  margin: 0;
+  top: -4px;
+  right: 95%;
+
+  text-shadow: 0 0 1px white;
+}
+
 p#ballCount {
   position: absolute;
   margin: 0;
@@ -44,20 +56,30 @@ p#ballCount {
   color: #aaa;
 }
 p#mainHP {
+  font-size: 2rem;
   position: absolute;
   margin: 0;
   top: 55px;
   right: 5px;
-  color: #aaa;
+  color: rgb(255, 0, 0);
+  text-shadow: 0 0 4px white;
 }
 h3#result {
-  font-size: 4rem;
+  font-size: 7rem;
   letter-spacing: 1px;
   position: absolute;
   margin: 0;
-  top: 100px;
-  right: 50%;
+  top: 25%;
+  right: 25%;
 
   color: transparent;
   text-shadow: 0 0 4px #d32a2a;
+}
+.move_border{
+  margin-left: 10%; 
+  width: 80%;
+  height: 90%;
+  
+  border: 1px solid white;
+  position: absolute;
 }

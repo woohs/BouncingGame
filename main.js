@@ -3,17 +3,35 @@ var ctx = canvas.getContext('2d');
 
 var width = canvas.width = window.innerWidth;
 var height = canvas.height = window.innerHeight;
-var BALL_COUNT = random(15,20);
+var MOVE_MIN_WIDTH = width * 0.1;
+var MOVE_MIN_HEIGHT = height * 0.1;
+var MOVE_MAX_WIDTH = width * 0.9;
+var MOVE_MAX_HEIGHT = height * 0.9;
 var ANIMATION = null;
+
+
 window.onload = function () {
-  setTimeout();
+  updateHtml();
+  showMainHP(evilCircle.hp);
+  setTimeout( () => {
+    gameParams.start = true;
+  }, 1000)
   loop();
 }
-// function to generate random number
 
+
+// function to generate random number
 function random(min,max) {
   var num = Math.floor(Math.random()*(max-min)) + min;
   return num;
+}
+
+//系统变量
+function GameParams(){
+  this.time = 10;
+  this.chapter = 1;
+  this.ballCount = 10;
+  this.start = false;
 }
 
 function Shape(x, y, velX, velY, exists) {
@@ -31,7 +49,7 @@ function EvilCircle(x, y, exists) {
   this.size = 10;
   this.velX = 10;
   this.velY = 10;
-  this.hp = 10; // 生命值
+  this.hp = 50; // 生命值
 }
 
 EvilCircle.prototype.draw = function(){
@@ -43,19 +61,19 @@ EvilCircle.prototype.draw = function(){
 }
 
 EvilCircle.prototype.checkBounds = function() {
-  if((this.x + this.size) >= width) {
+  if((this.x + this.size) >= MOVE_MAX_WIDTH) {
     this.x -= this.size;
   }
 
-  if((this.x - this.size) <= 0) {
+  if((this.x - this.size) <= MOVE_MIN_WIDTH) {
     this.x += this.size;
   }
 
-  if((this.y + this.size) >= height) {
+  if((this.y + this.size) >= MOVE_MAX_HEIGHT) {
     this.y -= this.size;
   }
 
-  if((this.y - this.size) <= 0) {
+  if((this.y - this.size) <= MOVE_MIN_HEIGHT) {
     this.y += this.size;
   }
 };
@@ -66,9 +84,17 @@ EvilCircle.prototype.setControls = function() {
 
   window.onkeyup = function (e) {
     _keyPressed[e.keyCode] = false;
+    if(e.keyCode === 16){
+      _this.velX = 10;
+      _this.velY = 10;
+    }
   }
   window.onkeydown = function(e){
     _keyPressed[e.keyCode] = true;
+    if(e.keyCode === 16){
+      _this.velX = 15;
+      _this.velY = 15;
+    }
   }
   setInterval(function(){
     for(var key in _keyPressed){
@@ -107,6 +133,7 @@ EvilCircle.prototype.collisionDetect = function() {
     if (distance < this.size + balls[j].size) {
       this.hp --; //扣分
       this.color = 'rgb(' + random(0,255) + ',' + random(0,255) + ',' + random(0,255) +')';
+      showMainHP(this.hp);
     }
     
   }
@@ -181,8 +208,9 @@ var balls = [];
 function loop() {
   ctx.fillStyle = 'rgba(0,0,0,0.25)';
   ctx.fillRect(0,0,width,height);
-  
-  while(balls.length < BALL_COUNT) {
+  ctx.strokeRect(width * 0.1, height * 0.1, width * 0.8, height * 0.8);  //绘制矩形边框
+
+  while(balls.length < gameParams.ballCount) {
     var size = random(10,20);
     var ball = new Ball(
       // ball position always drawn at least one ball width
@@ -198,50 +226,89 @@ function loop() {
     balls.push(ball);
   }
 
-  var _ballCount = 0;
-  for(var i = 0; i < balls.length; i++) {
-    if(balls[i].exists){
-      balls[i].draw();
-      balls[i].update();
-      balls[i].collisionDetect();
-      _ballCount ++;
+  
+    for(var i = 0; i < balls.length; i++) {
+      if(balls[i].exists){
+        balls[i].draw();
+        if(gameParams.start){
+          balls[i].update();
+          balls[i].collisionDetect();
+        }
+      }
     }
+  
 
-  }
 
   evilCircle.draw();
   evilCircle.checkBounds();
   evilCircle.collisionDetect();
-  showBallsCount(_ballCount);//显示分数
-  showMainHP(evilCircle.hp);
+ 
+  
   ANIMATION = requestAnimationFrame(loop);
 }
 
-function showBallsCount(val){
-  document.getElementById('ballCount').innerHTML = 'Ball Count:' + val;
+function updateHtml(){
+  document.getElementById('ballCount').innerHTML = 'Ball Count:' + gameParams.ballCount;
+  document.getElementById('chapter').innerHTML = gameParams.chapter;
 }
 function showMainHP(val){
   document.getElementById('mainHP').innerHTML = 'HP:' + val;
   if(val <= 0){
     document.getElementById('result').innerHTML = 'GAME OVER'
     window.cancelAnimationFrame(ANIMATION);
-    
+    clearInterval(timer);//停止定时器
     
   }
 }
-
-function setTimeout(){
-  var _timeout = 30;
-  var timer = setInterval(()=>{
-    _timeout --;
-    document.getElementById('timeout').innerHTML = _timeout;
-    if(_timeout <= 0){
-      window.cancelAnimationFrame(ANIMATION);
-      clearInterval(timer);
-    }
-  },1000)
-
+//增加球速度
+function promoteVel() {
+  for(var itm of balls){
+    console.log(itm);
+    itm.velX < 0 ? itm.velX -= random(1, 9)/10 : itm.velX += random(1, 9)/10;
+    itm.velY < 0 ? itm.velY -= random(1, 9)/10 : itm.velY += random(1, 9)/10;
+  }
 }
 
-var evilCircle = new EvilCircle(random(0,width),random(0,height),true);
+function successAction(){
+  clearInterval(timer);//停止定时器
+  gameParams.start = false; 
+  setTimeout(() => {//延时一秒增加
+    if(gameParams.ballCount < 20){
+      gameParams.ballCount += 2;
+    }else{
+      promoteVel();//提升速度
+    }
+    gameParams.time = 10;
+    gameParams.chapter ++;
+    updateHtml();
+  }, 1000)
+
+  setTimeout(() => {//延时3秒启动
+    gameParams.start = true; 
+
+    timer = setInterval(()=>{
+      gameParams.time --;
+      document.getElementById('timeout').innerHTML = gameParams.time;
+      if(gameParams.time <= 0){
+        successAction();
+      }
+    },1000)
+  },3000);
+}
+
+//定时器
+var timer = setInterval(()=>{
+  gameParams.time --;
+  document.getElementById('timeout').innerHTML = gameParams.time;
+  if(gameParams.time <= 0){
+    successAction();
+  }
+},1000)
+
+
+//初始化系统变量
+var gameParams = new GameParams();
+
+//初始化目标
+var evilCircle = new EvilCircle(random(MOVE_MIN_WIDTH,MOVE_MAX_WIDTH),random(MOVE_MIN_HEIGHT,MOVE_MAX_HEIGHT),true);
 evilCircle.setControls();
