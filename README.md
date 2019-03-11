@@ -1,12 +1,12 @@
 # bouncing
 
 #### 项目介绍
-一款充满想象力的项目
+一个js小游戏
 
 [点我开始游戏]( https://woohs.github.io/BouncingGame/)
 
 
-#### 软件架构
+#### 技术栈
 html,css,js
 
 #### 游戏说明
