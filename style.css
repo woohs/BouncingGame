@@ -1,9 +1,10 @@
-html, body {
+html,
+body {
   margin: 0;
 }
 
 html {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   height: 100%;
 }
 
@@ -13,73 +14,60 @@ body {
   border: 1px solid white;
 }
 
-h1 {
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 24px;
+  align-items: center;
+  font-size: 20px;
+}
+
+#timeout {
   font-size: 2rem;
-  letter-spacing: -1px;
-  position: absolute;
-  margin: 0;
-  top: -4px;
-  right: 5px;
-
-  color: transparent;
-  text-shadow: 0 0 4px white;
-}
-
-h2 {
-  font-size: 3rem;
-  letter-spacing: 1px;
-  position: absolute;
-  margin: 0;
-  top: -4px;
-  right: 50%;
-
-  color: transparent;
-  text-shadow: 0 0 4px #d32a2a;
-}
-
-h1#chapter {
-  font-size: 2.5rem;
-  letter-spacing: -1px;
-  position: absolute;
-  margin: 0;
-  top: -4px;
-  right: 95%;
-
+  color: #f5222d;
   text-shadow: 0 0 1px white;
+  vertical-align: sub;
 }
 
-p#ballCount {
+#result {
   position: absolute;
-  margin: 0;
-  top: 35px;
-  right: 5px;
-  color: #aaa;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 86px;
+  font-weight: bold;
+  color: #f5222d;
 }
-p#mainHP {
+
+#ballCount {
   font-size: 2rem;
-  position: absolute;
-  margin: 0;
-  top: 55px;
-  right: 5px;
-  color: rgb(255, 0, 0);
-  text-shadow: 0 0 4px white;
+  color: #52c41a;
+  text-shadow: 0 0 1px white;
+  vertical-align: sub;
 }
-h3#result {
-  font-size: 7rem;
-  letter-spacing: 1px;
-  position: absolute;
-  margin: 0;
-  top: 25%;
-  right: 25%;
 
-  color: transparent;
-  text-shadow: 0 0 4px #d32a2a;
+#mainHP {
+  font-size: 2rem;
+  color: #f5222d;
+  text-shadow: 0 0 1px white;
+  vertical-align: sub;
 }
-.move_border{
-  margin-left: 10%; 
-  width: 80%;
-  height: 90%;
-  
-  border: 1px solid white;
+
+#avatar {
+  visibility: hidden;
+}
+
+.footer {
   position: absolute;
+  text-align: right;
+  font-size: 26px;
+  bottom: 0;
+  right: 10px;
+  font-family: fantasy;
+  color: white;
 }
