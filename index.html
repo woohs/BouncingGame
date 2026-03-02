@@ -1,53 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>快逃！</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    name="description"
+    content="快跑狗头重制版：更清晰的信息架构、更顺滑的交互、更可交付的网页小游戏体验。"
+  />
+  <title>快跑狗头 · 重制版</title>
   <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
-  
 </head>
 <body>
-  <div class="header">
-    <div>
-      <div>
-        当前关卡：
-        <span id="chapter">1</span>
+  <main class="game-layout">
+    <section class="panel hud" aria-label="游戏状态面板">
+      <div class="brand">
+        <h1>快跑狗头 · 重制版</h1>
+        <p>在危险边界中尽可能存活更久，挑战更高关卡。</p>
       </div>
-    
-      <div>
-        历史最高：
-        <span id="best-chapter">-</span>
+
+      <div class="stats-grid">
+        <article class="stat-card">
+          <span class="label">当前关卡</span>
+          <strong id="chapter">1</strong>
+        </article>
+        <article class="stat-card">
+          <span class="label">历史关卡</span>
+          <strong id="best-chapter">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="label">当前得分</span>
+          <strong id="score">0</strong>
+        </article>
+        <article class="stat-card">
+          <span class="label">历史最高分</span>
+          <strong id="best-score">0</strong>
+        </article>
       </div>
-    </div>
 
-    <div>
-      倒计时：
-      <span id="timeout">10</span>
-    </div>
-
-    <div class="info">
-      <div>
-        当前球数：
-        <span id="ballCount"></span>
+      <div class="metric">
+        <div class="metric-row">
+          <span>生命值</span>
+          <span id="mainHP">100 / 100</span>
+        </div>
+        <div class="bar"><div id="hpBar" class="bar-value hp"></div></div>
       </div>
-      <div>
-        血量：
-        <span id="mainHP"></span>
+
+      <div class="metric">
+        <div class="metric-row">
+          <span>关卡倒计时</span>
+          <span><span id="timeout">20.0</span>s</span>
+        </div>
+        <div class="bar"><div id="timeBar" class="bar-value time"></div></div>
       </div>
-    </div>
-  </div>
-  <div id="result"></div>
 
-  <canvas></canvas>
+      <div class="metric">
+        <div class="metric-row">
+          <span>冲刺能量</span>
+          <span id="sprintText">100%</span>
+        </div>
+        <div class="bar"><div id="sprintBar" class="bar-value sprint"></div></div>
+      </div>
 
-  <div class="footer">
-    <div>by woohs</div>
-  </div>
+      <div class="metric-row compact">
+        <span>当前威胁球数量</span>
+        <strong id="ballCount">0</strong>
+      </div>
 
-  <img id="avatar" src="./dog.png">
-  
+      <div class="control-wrap">
+        <button id="startBtn" class="btn primary" type="button">开始游戏</button>
+        <button id="pauseBtn" class="btn secondary" type="button" disabled>暂停</button>
+        <button id="restartBtn" class="btn ghost" type="button">重新开始</button>
+      </div>
+
+      <label for="difficulty" class="difficulty-label">难度选择</label>
+      <select id="difficulty" class="difficulty-select">
+        <option value="casual">休闲（新手）</option>
+        <option value="normal" selected>标准（推荐）</option>
+        <option value="hard">地狱（高压）</option>
+      </select>
+    </section>
+
+    <section class="panel arena-panel" aria-label="游戏竞技场">
+      <canvas id="gameCanvas"></canvas>
+      <div id="overlay" class="overlay visible" role="status" aria-live="polite">
+        <h2 id="overlayTitle">准备开始</h2>
+        <p id="overlayDesc">点击“开始游戏”后进入第 1 关，存活越久分数越高。</p>
+        <p id="overlayHint">移动：W/A/S/D 或方向键 · 冲刺：Shift · 暂停：P 或空格</p>
+      </div>
+      <div id="toast" class="toast" aria-live="assertive"></div>
+    </section>
+
+    <aside class="panel guide" aria-label="玩法引导">
+      <h2>玩法说明</h2>
+      <ol>
+        <li>在边界内移动，避免与彩色威胁球发生碰撞。</li>
+        <li>按住 Shift 可短时冲刺，但会消耗冲刺能量。</li>
+        <li>每关倒计时结束后进入下一关，威胁球数量与速度都会提升。</li>
+        <li>生命值归零即失败，可立即重开继续挑战。</li>
+      </ol>
+
+      <h3>交付级体验增强</h3>
+      <ul>
+        <li>完整状态流：准备 / 进行中 / 暂停 / 结束。</li>
+        <li>实时 HUD：关卡、得分、生命、倒计时、冲刺能量。</li>
+        <li>智能反馈：升级提示、暂停提示、结算提示。</li>
+      </ul>
+
+      <p class="signature">by woohs · redesigned for delivery</p>
+    </aside>
+  </main>
+
+  <img id="avatar" src="./dog.png" alt="Doge avatar" />
   <script src="main.js"></script>
 </body>
 </html>
